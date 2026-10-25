@@ -179,6 +179,58 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
   td{padding:0 8px 0 12px}
   .tray{right:12px;bottom:12px}
 }
+
+/* ---------- selection, trash, viewer, picker ---------- */
+th.c-chk,td.c-chk{width:1%;padding:0 0 0 14px}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);margin:0;cursor:pointer;vertical-align:middle}
+tr.sel{background:var(--accent-soft)!important}
+tr.dragging{opacity:.5}
+tr.drop-target,.crumbs button.drop-target{background:var(--accent-soft);outline:2px dashed var(--accent);outline-offset:-2px}
+.selbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 10px 8px 16px;margin-bottom:12px;border-radius:12px;background:var(--accent);color:var(--accent-ink);box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.selbar b{margin-right:auto;font-weight:600}
+.selbar button{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:0;background:rgba(255,255,255,.18);color:inherit;font-weight:500}
+.selbar button:hover{background:rgba(255,255,255,.3)}
+.selbar button svg{width:17px;height:17px}
+.note{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;margin-bottom:14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:14px}
+.note span{margin-right:auto}
+.note button{padding:8px 14px;border-radius:var(--r);border:1px solid var(--danger);background:none;color:var(--danger);font-weight:600}
+.note button:hover{background:var(--danger-soft)}
+.side .btn.on{background:#1D2A35;border-color:#3A4B59}
+.side .btn .badge{margin-left:auto;font-size:12px;color:var(--side-muted)}
+.name button.open{background:none;border:0;padding:0;text-align:left;font-weight:500;min-width:0;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.name button.open:hover{text-decoration:underline;text-underline-offset:3px}
+.c-from{white-space:nowrap;color:var(--muted);font-size:14px;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.toast{display:flex;align-items:center;gap:14px}
+.toast button{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+@media (prefers-color-scheme:light){ .toast button{color:#7FE3EB} }
+.viewer{position:fixed;inset:0;z-index:70;background:rgba(6,10,14,.985);color:#E9EEF2;display:flex;flex-direction:column}
+.v-top{display:flex;align-items:center;gap:8px;padding:10px 14px;flex:none}
+.v-top .t{min-width:0;margin-right:auto}
+.v-top .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.v-top .t small{color:#93A3B1}
+.v-top .icon{color:#C9D3DB}.v-top .icon:hover{background:rgba(255,255,255,.14);color:#fff}
+.v-body{flex:1;min-height:0;display:grid;place-items:center;position:relative;padding:0 56px 16px}
+.v-body img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px}
+.v-body video{max-width:100%;max-height:100%;border-radius:4px;background:#000}
+.v-body audio{width:min(520px,100%)}
+.v-body iframe{width:100%;height:100%;border:0;border-radius:6px;background:#fff}
+.v-body pre{margin:0;width:min(980px,100%);height:100%;overflow:auto;padding:18px 20px;border-radius:10px;background:#0E171E;color:#DCE5EC;font:13px/1.55 ui-monospace,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.v-msg{text-align:center;color:#B5C2CD}
+.v-msg b{display:block;font-size:18px;color:#fff;margin-bottom:6px}
+.v-msg button{margin-top:16px;padding:10px 18px;border-radius:var(--r);border:0;background:#1AA3AF;color:#04181A;font-weight:600}
+.v-nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;z-index:2}
+.v-nav:hover{background:rgba(255,255,255,.25)}
+.v-nav svg{width:22px;height:22px}
+.v-nav.l{left:6px}.v-nav.r{right:6px}
+@media (max-width:860px){ .v-body{padding:0 8px 12px} .v-nav{width:38px;height:38px;opacity:.85} th.c-from,td.c-from{display:none} }
+dialog .row button:disabled{opacity:.4;cursor:default}
+#pk .pk-path{margin:0 0 8px;font-size:13px;color:var(--muted)}
+#pk .pk-list{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+#pk .pk-list button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left}
+#pk .pk-list button:last-child{border-bottom:0}
+#pk .pk-list button:hover{background:var(--hover)}
+#pk .pk-list svg{width:18px;height:18px;color:var(--accent);flex:none}
+#pk .pk-list .none{padding:18px;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){ .bar i{transition:none} }
 </style>
 </head>
@@ -212,6 +264,7 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
     <button class="btn primary" id="bUp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span>Upload<span class="lbl-long"> files</span></span></button>
     <button class="btn" id="bUpDir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 15v-5M9.5 12.5 12 10l2.5 2.5"/></svg><span>Upload<span class="lbl-long"> a</span> folder</span></button>
     <button class="btn" id="bMk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>New folder</button>
+    <button class="btn" id="bTrash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg><span>Trash</span><span class="badge" id="trashBadge"></span></button>
 
     <div class="meter" id="meter" hidden>
       <div class="meter-row">
@@ -227,7 +280,7 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
           <div class="sub" id="mTotal"></div>
         </div>
       </div>
-      <div class="mine">Your files take up <b id="mMine">0 B</b></div>
+      <div class="mine">Your files take up <b id="mMine">0 B</b><span id="mTrashWrap" hidden> · trash holds <b id="mTrash">0 B</b></span></div>
     </div>
     <div class="who"><span id="whoName"></span><button id="bOut">Sign out</button></div>
   </aside>
@@ -237,10 +290,29 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
       <nav class="crumbs" id="crumbs" aria-label="Folder path"></nav>
       <input class="search" id="search" type="search" placeholder="Filter this folder" aria-label="Filter this folder">
     </div>
+    <div class="selbar" id="selbar" hidden>
+      <b id="selCount"></b>
+      <button id="sDl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12M7 11l5 5 5-5M4 20h16"/></svg>Download</button>
+      <button id="sMv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 13h8M13 10l3 3-3 3"/></svg>Move</button>
+      <button id="sRm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Delete</button>
+      <button id="sNo">Clear</button>
+    </div>
+    <div class="note" id="trashNote" hidden><span id="trashNoteT"></span><button id="bEmpty">Empty trash</button></div>
     <div class="sheet">
       <div class="loading" id="loading">Loading…</div>
+      <table id="ttbl" hidden>
+        <thead><tr>
+          <th class="c-name"><button style="cursor:default">Name</button></th>
+          <th class="c-from"><button style="cursor:default">Was in</button></th>
+          <th class="c-size"><button style="cursor:default">Size</button></th>
+          <th class="c-date"><button style="cursor:default">Deleted</button></th>
+          <th class="c-act"></th>
+        </tr></thead>
+        <tbody id="trows"></tbody>
+      </table>
       <table id="tbl" hidden>
         <thead><tr>
+          <th class="c-chk"><input type="checkbox" id="selAll" aria-label="Select all"></th>
           <th class="c-name"><button data-k="name">Name <span class="arr"></span></button></th>
           <th class="c-size"><button data-k="size">Size <span class="arr"></span></button></th>
           <th class="c-date"><button data-k="mtime">Modified <span class="arr"></span></button></th>
@@ -267,6 +339,23 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
   <div class="e" id="dE" role="alert"></div>
   <div class="row"><button type="button" id="dNo">Cancel</button><button type="submit" class="ok" id="dOk"></button></div>
 </form></dialog>
+
+<dialog id="pk"><form method="dialog" id="pkForm">
+  <h2 id="pkT">Move to…</h2><p class="pk-path" id="pkPath"></p>
+  <div class="pk-list" id="pkList"></div>
+  <div class="row"><button type="button" id="pkNo">Cancel</button><button type="submit" class="ok" id="pkOk">Move here</button></div>
+</form></dialog>
+
+<div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="File preview">
+  <div class="v-top">
+    <div class="t"><b id="vName"></b><small id="vCount"></small></div>
+    <button class="icon" id="vDl" title="Download" aria-label="Download"></button>
+    <button class="icon" id="vX" title="Close (Esc)" aria-label="Close"></button>
+  </div>
+  <div class="v-body" id="vBody"></div>
+  <button class="v-nav l" id="vPrev" aria-label="Previous file"></button>
+  <button class="v-nav r" id="vNext" aria-label="Next file"></button>
+</div>
 
 <input type="file" id="fileIn" multiple hidden>
 <input type="file" id="dirIn" webkitdirectory hidden>
@@ -297,13 +386,18 @@ const ICON = {
   dl:  '<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>',
   ren: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
   del: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
-  dir: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'
+  dir: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  res: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/>',
+  x:   '<path d="M6 6l12 12M18 6 6 18"/>',
+  lt:  '<path d="M15 5l-7 7 7 7"/>',
+  gt:  '<path d="M9 5l7 7-7 7"/>'
 };
 
 /* ---------- state ---------- */
 let token = ""; try { token = localStorage.getItem("drive.token") || ""; } catch {}
 let entries = [], cwd = [], me = null;
 let sort = { k: "name", d: 1 }, filter = "";
+let keepDays = 30, inTrash = false, trashItems = [], sel = new Set(), shown = [], lastIdx = -1, dragNames = null;
 
 const saveToken = t => { token = t; try { t ? localStorage.setItem("drive.token", t) : localStorage.removeItem("drive.token"); } catch {} };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -318,10 +412,11 @@ function fmtDate(ms) {
   return d.toLocaleDateString([], { month: "short", day: "numeric", year: d.getFullYear() === now.getFullYear() ? undefined : "numeric" });
 }
 let toastT;
-function toast(msg) {
+function toast(msg, action) {
   document.querySelectorAll(".toast").forEach(t => t.remove());
   const t = h("div", { class: "toast", role: "status" }, msg); document.body.append(t);
-  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 4500);
+  if (action) t.append(h("button", { onclick: () => { t.remove(); action.fn(); } }, action.label));
+  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), action ? 9000 : 4500);
 }
 
 /* ---------- API ---------- */
@@ -366,20 +461,30 @@ const pathFromHash = () => location.hash.slice(2).split("/").filter(Boolean).map
 const hashFor = parts => "#/" + parts.map(encodeURIComponent).join("/");
 const goto = parts => { location.hash = hashFor(parts); };
 window.addEventListener("hashchange", () => { if (token && !$("app").hidden) load(); });
+const TRASH_HASH = "#trash";
 
 function renderCrumbs() {
   const nav = $("crumbs"); nav.replaceChildren();
-  nav.append(h("button", { onclick: () => goto([]) }, NAME));
+  const crumb = (label, parts, cur) => { const b = h("button", { onclick: () => goto(parts), "aria-current": cur ? "page" : null }, label); dropOnto(b, () => parts); return b; };
+  nav.append(crumb(NAME, [], !inTrash && !cwd.length));
+  if (inTrash) { nav.append(h("span", { class: "sep", "aria-hidden": "true" }, "/"), h("button", { "aria-current": "page" }, "Trash")); return; }
   cwd.forEach((p, i) => {
     nav.append(h("span", { class: "sep", "aria-hidden": "true" }, "/"));
-    nav.append(h("button", { onclick: () => goto(cwd.slice(0, i + 1)), "aria-current": i === cwd.length - 1 ? "page" : null }, p));
+    nav.append(crumb(p, cwd.slice(0, i + 1), i === cwd.length - 1));
   });
 }
 
 /* ---------- list ---------- */
 async function load() {
-  cwd = pathFromHash(); renderCrumbs(); $("search").value = filter = "";
-  $("loading").hidden = false; $("tbl").hidden = true; $("empty").hidden = true;
+  inTrash = location.hash === TRASH_HASH; cwd = inTrash ? [] : pathFromHash(); renderCrumbs(); $("search").value = filter = "";
+  sel.clear(); lastIdx = -1; paintSel(); closeViewer();
+  $("bTrash").classList.toggle("on", inTrash); $("trashNote").hidden = !inTrash;
+  $("search").placeholder = inTrash ? "Filter the trash" : "Filter this folder";
+  $("loading").hidden = false; $("loading").textContent = "Loading…"; $("tbl").hidden = true; $("ttbl").hidden = true; $("empty").hidden = true;
+  if (inTrash) {
+    try { const r = await api("/api/trash"); trashItems = r.entries; keepDays = r.keepDays; renderTrash(); } catch (e) { $("loading").textContent = e.message; }
+    return;
+  }
   try {
     const r = await api("/api/list?path=" + encodeURIComponent(cwd.join("/")));
     entries = r.entries; render();
@@ -396,6 +501,8 @@ function paintMeter() {
   $("whoName").textContent = "Signed in as " + me.user;
   $("meter").hidden = false;
   $("mMine").textContent = fmtSize(me.used);
+  $("mTrashWrap").hidden = !me.trash; $("mTrash").textContent = fmtSize(me.trash || 0);
+  $("trashBadge").textContent = me.trashCount ? me.trashCount : "";
   if (me.total > 0) {
     const frac = Math.min(1, Math.max(0, (me.total - me.free) / me.total));
     $("ringArc").setAttribute("stroke-dashoffset", String(263.9 * (1 - frac)));
@@ -430,7 +537,7 @@ function render() {
     return (x < y ? -1 : x > y ? 1 : 0) * sort.d;
   });
   document.querySelectorAll("th .arr").forEach(s => { const k = s.parentElement.dataset.k; s.textContent = k === sort.k ? (sort.d > 0 ? "↑" : "↓") : ""; });
-  const tb = $("rows"); tb.replaceChildren();
+  const tb = $("rows"); tb.replaceChildren(); shown = rows; paintSel();
   if (!rows.length) {
     $("tbl").hidden = true; const em = $("empty"); em.hidden = false; em.replaceChildren();
     if (q) em.append(h("b", {}, "No matches"), "Nothing in this folder matches “" + filter + "”.");
@@ -439,26 +546,42 @@ function render() {
     return;
   }
   $("empty").hidden = true; $("tbl").hidden = false;
-  for (const e of rows) {
+  rows.forEach((e, idx) => {
     const rel = cwd.concat(e.name).join("/");
     const meta = (e.dir ? "" : fmtSize(e.size) + " · ") + fmtDate(e.mtime);
     const title = e.dir
       ? h("button", { class: "link", onclick: () => goto(cwd.concat(e.name)) }, e.name)
-      : h("b", {}, e.name);
-    tb.append(h("tr", {},
+      : h("button", { class: "open", title: "Preview", onclick: () => openViewer(e) }, e.name);
+    const cb = h("input", { type: "checkbox", "aria-label": "Select " + e.name });
+    cb.checked = sel.has(e.name);
+    cb.onclick = ev => {
+      if (ev.shiftKey && lastIdx >= 0) { const [a, b] = [Math.min(lastIdx, idx), Math.max(lastIdx, idx)]; for (let i = a; i <= b; i++) cb.checked ? sel.add(rows[i].name) : sel.delete(rows[i].name); }
+      else cb.checked ? sel.add(e.name) : sel.delete(e.name);
+      lastIdx = idx; paintSel();
+    };
+    const tr = h("tr", { draggable: "true", "data-name": e.name },
+      h("td", { class: "c-chk" }, cb),
       h("td", { class: "c-name" }, h("div", { class: "name" }, chip(e), h("div", { class: "t" }, title, h("small", {}, meta)))),
       h("td", { class: "c-size" }, e.dir ? "—" : fmtSize(e.size)),
       h("td", { class: "c-date" }, fmtDate(e.mtime)),
       h("td", { class: "c-act" }, h("div", { class: "acts" },
         e.dir ? null : h("button", { class: "icon", title: "Download", "aria-label": "Download " + e.name, onclick: () => download(rel) }, svg(ICON.dl)),
         h("button", { class: "icon", title: "Rename", "aria-label": "Rename " + e.name, onclick: () => rename(e) }, svg(ICON.ren)),
-        h("button", { class: "icon del", title: "Delete", "aria-label": "Delete " + e.name, onclick: () => remove(e) }, svg(ICON.del))))));
-  }
+        h("button", { class: "icon del", title: "Move to trash", "aria-label": "Move " + e.name + " to trash", onclick: () => remove(e) }, svg(ICON.del)))));
+    tr.addEventListener("dragstart", ev => {
+      dragNames = sel.has(e.name) ? [...sel] : [e.name];
+      ev.dataTransfer.setData("application/x-drive-move", "1"); ev.dataTransfer.effectAllowed = "move"; tr.classList.add("dragging");
+    });
+    tr.addEventListener("dragend", () => { dragNames = null; tr.classList.remove("dragging"); document.querySelectorAll(".drop-target").forEach(x => x.classList.remove("drop-target")); });
+    if (e.dir) dropOnto(tr, () => cwd.concat(e.name), e.name);
+    tb.append(tr);
+  });
+  paintSel();
 }
 document.querySelectorAll("th button").forEach(b => b.onclick = () => {
   const k = b.dataset.k; sort = { k, d: sort.k === k ? -sort.d : 1 }; render();
 });
-$("search").addEventListener("input", e => { filter = e.target.value; render(); });
+$("search").addEventListener("input", e => { filter = e.target.value; inTrash ? renderTrash() : render(); });
 
 /* ---------- dialogs ---------- */
 function ask({ title, text = "", value = null, ok = "OK", danger = false, validate }) {
@@ -495,11 +618,21 @@ async function rename(e) {
   if (!n || n === e.name) return;
   try { await post("/api/rename", { path: cwd.concat(e.name).join("/"), name: n }); load(); } catch (er) { toast(er.message); }
 }
-async function remove(e) {
-  const ok = await ask({ title: "Delete " + (e.dir ? "folder" : "file") + "?", text: e.dir ? `“${e.name}” and everything inside it will be permanently deleted from your PC.` : `“${e.name}” will be permanently deleted from your PC.`, ok: "Delete", danger: true });
-  if (!ok) return;
-  try { await post("/api/delete", { path: cwd.concat(e.name).join("/") }); load(); loadMe(); toast("Deleted " + e.name); } catch (er) { toast(er.message); }
+async function trashThese(list) {
+  if (!list.length) return;
+  if (list.length > 1 || list[0].dir) {
+    const ok = await ask({ title: list.length > 1 ? `Move ${list.length} items to trash?` : "Move folder to trash?",
+      text: `You can restore ${list.length > 1 ? "them" : "it"} from Trash for ${keepDays} days.`, ok: "Move to trash" });
+    if (!ok) return;
+  }
+  try {
+    const r = await post("/api/delete", { paths: list.map(e => cwd.concat(e.name).join("/")) });
+    const ids = r.items.map(i => i.id); sel.clear(); load(); loadMe();
+    toast(list.length === 1 ? `Moved “${list[0].name}” to trash` : `Moved ${list.length} items to trash`,
+      { label: "Undo", fn: async () => { try { await post("/api/restore", { ids }); load(); loadMe(); } catch (er) { toast(er.message); } } });
+  } catch (er) { toast(er.message); }
 }
+const remove = e => trashThese([e]);
 async function download(rel) {
   try {
     const { url } = await api("/api/link?path=" + encodeURIComponent(rel));
@@ -627,13 +760,170 @@ window.addEventListener("drop", async e => {
   enqueue(out);
 });
 
+/* ---------- selection ---------- */
+const picked = () => entries.filter(e => sel.has(e.name));
+function paintSel() {
+  const n = sel.size, bar = $("selbar"); bar.hidden = inTrash || !n;
+  $("selCount").textContent = n + " selected";
+  document.querySelectorAll("#rows tr").forEach(tr => { const on = sel.has(tr.dataset.name); tr.classList.toggle("sel", on); tr.querySelector("input").checked = on; });
+  const all = $("selAll"); all.checked = shown.length > 0 && shown.every(e => sel.has(e.name)); all.indeterminate = n > 0 && !all.checked && shown.some(e => sel.has(e.name));
+  $("sDl").hidden = !picked().some(e => !e.dir);
+}
+$("selAll").onclick = e => { if (e.target.checked) shown.forEach(x => sel.add(x.name)); else shown.forEach(x => sel.delete(x.name)); paintSel(); };
+$("sNo").onclick = () => { sel.clear(); paintSel(); };
+$("sRm").onclick = () => trashThese(picked());
+$("sMv").onclick = () => moveDialog(picked());
+$("sDl").onclick = async () => {
+  const files = picked().filter(e => !e.dir), skipped = sel.size - files.length;
+  if (skipped) toast(`Downloading ${files.length} file${files.length > 1 ? "s" : ""}. Folders can't be downloaded yet.`);
+  else if (files.length > 1) toast(`Downloading ${files.length} files. If your browser asks, allow multiple downloads.`);
+  for (const f of files) { await download(cwd.concat(f.name).join("/")); await sleep(500); }
+};
+window.addEventListener("keydown", e => {
+  if (!$("viewer").hidden) {
+    if (e.key === "Escape") closeViewer(); else if (e.key === "ArrowLeft") stepViewer(-1); else if (e.key === "ArrowRight") stepViewer(1);
+    return;
+  }
+  if ($("app").hidden || document.querySelector("dialog[open]") || /INPUT|TEXTAREA/.test(document.activeElement.tagName) && document.activeElement.type !== "checkbox") return;
+  if (e.key === "Escape" && sel.size) { sel.clear(); paintSel(); }
+  else if (e.key === "Delete" && sel.size && !inTrash) trashThese(picked());
+});
+
+/* ---------- moving files ---------- */
+async function moveTo(list, dest) {
+  try {
+    const r = await post("/api/move", { paths: list.map(e => cwd.concat(e.name).join("/")), to: dest.join("/") });
+    sel.clear(); load();
+    const to = dest.length ? dest[dest.length - 1] : NAME;
+    if (r.skipped.length) toast(`Moved ${r.moved}. Skipped: ${r.skipped.slice(0, 2).join(", ")}${r.skipped.length > 2 ? "…" : ""}`);
+    else if (r.moved) toast(`Moved ${r.moved} item${r.moved > 1 ? "s" : ""} to ${to}`);
+  } catch (er) { toast(er.message); }
+}
+function dropOnto(el, getDest, selfName) {
+  el.addEventListener("dragover", e => { if (dragNames && !(selfName && dragNames.includes(selfName))) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; el.classList.add("drop-target"); } });
+  el.addEventListener("dragleave", () => el.classList.remove("drop-target"));
+  el.addEventListener("drop", e => {
+    if (!dragNames) return; e.preventDefault(); el.classList.remove("drop-target");
+    const dest = getDest(), list = entries.filter(x => dragNames.includes(x.name)); dragNames = null;
+    if (dest.join("/") !== cwd.join("/")) moveTo(list, dest);
+  });
+}
+function moveDialog(list) {
+  if (!list.length) return;
+  const dlg = $("pk"), moving = list.filter(e => e.dir).map(e => cwd.concat(e.name).join("/"));
+  let at = cwd.slice();
+  const inside = parts => moving.some(m => { const p = parts.join("/"); return p === m || p.startsWith(m + "/"); });
+  const paint = async () => {
+    $("pkPath").textContent = "Moving " + (list.length === 1 ? "“" + list[0].name + "”" : list.length + " items") + " to: " + [NAME, ...at].join(" / ");
+    const box = $("pkList"); box.replaceChildren(h("div", { class: "none" }, "Loading…"));
+    let dirs = [];
+    try { dirs = (await api("/api/list?path=" + encodeURIComponent(at.join("/")))).entries.filter(e => e.dir); } catch (e) { box.replaceChildren(h("div", { class: "none" }, e.message)); return; }
+    box.replaceChildren();
+    if (at.length) box.append(h("button", { type: "button", onclick: () => { at = at.slice(0, -1); paint(); } }, svg(ICON.lt), "Up one level"));
+    for (const d of dirs) { const p = at.concat(d.name); if (inside(p)) continue; box.append(h("button", { type: "button", onclick: () => { at = p; paint(); } }, svg(ICON.dir), d.name)); }
+    if (!box.children.length || (!dirs.length && !at.length)) box.append(h("div", { class: "none" }, "No folders in here"));
+    $("pkOk").disabled = at.join("/") === cwd.join("/") || inside(at);
+  };
+  $("pkT").textContent = "Move to…";
+  $("pkNo").onclick = () => dlg.close();
+  dlg.oncancel = () => {};
+  $("pkForm").onsubmit = e => { e.preventDefault(); dlg.close(); moveTo(list, at); };
+  dlg.showModal(); paint();
+}
+
+/* ---------- trash ---------- */
+$("bTrash").onclick = () => { location.hash = TRASH_HASH; };
+function renderTrash() {
+  $("loading").hidden = true;
+  const q = filter.trim().toLowerCase(), rows = trashItems.filter(e => !q || e.name.toLowerCase().includes(q));
+  $("trashNoteT").textContent = trashItems.length ? `Items stay here for ${keepDays} days, then they're deleted from your PC for good.` : "";
+  $("bEmpty").hidden = !trashItems.length;
+  const tb = $("trows"); tb.replaceChildren();
+  if (!rows.length) {
+    $("ttbl").hidden = true; const em = $("empty"); em.hidden = false; em.replaceChildren();
+    em.append(h("b", {}, q ? "No matches" : "Trash is empty"), q ? "Nothing in the trash matches “" + filter + "”." : `Deleted files wait here for ${keepDays} days so you can get them back.`);
+    return;
+  }
+  $("empty").hidden = true; $("ttbl").hidden = false;
+  for (const e of rows) {
+    tb.append(h("tr", {},
+      h("td", { class: "c-name" }, h("div", { class: "name" }, chip(e), h("div", { class: "t" }, h("b", {}, e.name), h("small", {}, (e.dir ? "" : fmtSize(e.size) + " · ") + "was in " + (e.from || NAME) + " · deleted " + fmtDate(e.at))))),
+      h("td", { class: "c-from", title: e.from }, e.from || NAME),
+      h("td", { class: "c-size" }, fmtSize(e.size)),
+      h("td", { class: "c-date" }, fmtDate(e.at)),
+      h("td", { class: "c-act" }, h("div", { class: "acts" },
+        h("button", { class: "icon", title: "Restore", "aria-label": "Restore " + e.name, onclick: () => restore(e) }, svg(ICON.res)),
+        h("button", { class: "icon del", title: "Delete forever", "aria-label": "Delete " + e.name + " forever", onclick: () => purge(e) }, svg(ICON.del))))));
+  }
+}
+async function restore(e) {
+  try { const r = await post("/api/restore", { ids: [e.id] }); const to = r.restored[0]; toast(`Restored to ${to.includes("/") ? to.slice(0, to.lastIndexOf("/")) : NAME}`); load(); loadMe(); } catch (er) { toast(er.message); }
+}
+async function purge(e) {
+  if (!await ask({ title: "Delete forever?", text: `“${e.name}” will be permanently deleted from your PC. This can't be undone.`, ok: "Delete forever", danger: true })) return;
+  try { await post("/api/purge", { ids: [e.id] }); load(); loadMe(); } catch (er) { toast(er.message); }
+}
+$("bEmpty").onclick = async () => {
+  if (!await ask({ title: "Empty trash?", text: `${trashItems.length} item${trashItems.length > 1 ? "s" : ""} will be permanently deleted from your PC. This can't be undone.`, ok: "Empty trash", danger: true })) return;
+  try { await post("/api/purge", { all: true }); load(); loadMe(); toast("Trash emptied"); } catch (er) { toast(er.message); }
+};
+
+/* ---------- preview ---------- */
+const PREV = {
+  img: "jpg jpeg png gif webp bmp svg avif", vid: "mp4 m4v mov webm ogv", aud: "mp3 wav flac aac m4a ogg opus", pdf: "pdf",
+  txt: "txt md csv tsv log json xml yml yaml ini js css html htm py c cpp h java sh bat ps1 sql"
+};
+const pkind = name => { const d = name.lastIndexOf("."), x = d > 0 ? name.slice(d + 1).toLowerCase() : ""; return Object.keys(PREV).find(k => PREV[k].split(" ").includes(x)) || ""; };
+let vlist = [], vi = 0, vtok = 0;
+const TEXT_LIMIT = 256 * 1024;
+$("vDl").append(svg(ICON.dl)); $("vX").append(svg(ICON.x)); $("vPrev").append(svg(ICON.lt)); $("vNext").append(svg(ICON.gt));
+function openViewer(e) {
+  vlist = shown.filter(x => !x.dir); vi = Math.max(0, vlist.findIndex(x => x.name === e.name));
+  $("viewer").hidden = false; document.body.style.overflow = "hidden"; showItem();
+}
+function closeViewer() {
+  if ($("viewer").hidden) return; vtok++; clearBody(); $("viewer").hidden = true; document.body.style.overflow = "";
+}
+function clearBody() { const b = $("vBody"); b.querySelectorAll("video,audio").forEach(m => { m.pause(); m.removeAttribute("src"); m.load(); }); b.replaceChildren(); }
+function stepViewer(d) { if (vlist.length < 2) return; vi = (vi + d + vlist.length) % vlist.length; showItem(); }
+async function showItem() {
+  const e = vlist[vi], my = ++vtok, body = $("vBody"), rel = cwd.concat(e.name).join("/"), kind = pkind(e.name);
+  clearBody(); $("vName").textContent = e.name; $("vCount").textContent = `${vi + 1} of ${vlist.length} · ${fmtSize(e.size)}`;
+  $("vPrev").hidden = $("vNext").hidden = vlist.length < 2;
+  $("vDl").onclick = () => download(rel); $("vX").onclick = closeViewer;
+  const msg = (t, d) => body.replaceChildren(h("div", { class: "v-msg" }, h("b", {}, t), d || "", h("br"), h("button", { onclick: () => download(rel) }, "Download")));
+  if (!kind) return msg("No preview for this file type", "Download it to open it on your computer.");
+  body.append(h("div", { class: "v-msg" }, "Loading…"));
+  let src; try { src = API + (await api("/api/link?inline=1&path=" + encodeURIComponent(rel))).url; } catch (er) { if (my === vtok) msg("Couldn't load the file", er.message); return; }
+  if (my !== vtok) return;
+  const fail = () => { if (my === vtok) msg("This browser can't play this file", "Download it to open it in another app."); };
+  if (kind === "img") { const i = h("img", { alt: e.name }); i.onerror = fail; i.onload = () => { if (my === vtok) body.replaceChildren(i); }; i.src = src; }
+  else if (kind === "vid") { const v = h("video", { controls: true, autoplay: true, playsinline: true }); v.onerror = fail; v.src = src; body.replaceChildren(v); }
+  else if (kind === "aud") { const a = h("audio", { controls: true, autoplay: true }); a.onerror = fail; a.src = src; body.replaceChildren(h("div", { class: "v-msg" }, h("b", {}, e.name), a)); }
+  else if (kind === "pdf") body.replaceChildren(h("iframe", { src, title: e.name }));
+  else if (kind === "txt") {
+    try {
+      const r = await fetch(src); if (!r.ok) throw 0;
+      const rd = r.body.getReader(), parts = []; let got = 0;
+      while (got < TEXT_LIMIT) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; }
+      rd.cancel().catch(() => {});
+      let txt = new TextDecoder().decode(new Blob(parts).size ? await new Blob(parts).arrayBuffer() : new ArrayBuffer(0));
+      if (my !== vtok) return;
+      if (txt.includes("\u0000")) return msg("This doesn't look like a text file", "Download it instead.");
+      body.replaceChildren(h("pre", {}, txt + (e.size > TEXT_LIMIT ? "\n\n… showing the first 256 KB. Download the file for the rest." : "")));
+    } catch { if (my === vtok) msg("Couldn't load the file", "Check the connection to your PC and try again."); }
+  }
+}
+$("vPrev").onclick = () => stepViewer(-1); $("vNext").onclick = () => stepViewer(1);
+$("viewer").addEventListener("click", e => { if (e.target.id === "vBody") closeViewer(); });
+
 /* ---------- boot ---------- */
 function start() {
   document.title = NAME; $("loginTitle").textContent = NAME; $("brandName").textContent = NAME;
   if (!API || API.includes("yourdomain.com")) { showLogin("Set DRIVE_API in config.js to your tunnel address first."); return; }
   if (!token) return showLogin();
   $("login").hidden = true; $("app").hidden = false;
-  if (!location.hash.startsWith("#/")) history.replaceState(null, "", "#/");
+  if (!location.hash.startsWith("#/") && location.hash !== TRASH_HASH) history.replaceState(null, "", "#/");
   load(); loadMe();
 }
 document.title = NAME; $("loginTitle").textContent = NAME;
