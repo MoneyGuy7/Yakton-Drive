@@ -196,6 +196,7 @@ dialog .row button.ok.danger{background:var(--danger);color:#fff}
     <p>Sign in to reach the files on your PC.</p>
     <label class="field"><span>Username</span><input id="lu" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
     <label class="field"><span>Password</span><input id="lp" name="password" type="password" autocomplete="current-password" required></label>
+    <label class="field" id="codeField" hidden><span>6-digit code from your authenticator app</span><input id="lc" name="otp" inputmode="numeric" pattern="[0-9 ]*" maxlength="7" autocomplete="one-time-code" placeholder="123456"></label>
     <div class="err" id="lerr" role="alert"></div>
     <button class="btn-main" id="lbtn" type="submit">Sign in</button>
   </form>
@@ -337,14 +338,22 @@ async function api(path, opt = {}) {
 const post = (route, body) => api(route, { method: "POST", body: JSON.stringify(body) });
 
 /* ---------- sign in / out ---------- */
-function showLogin(msg = "") { $("app").hidden = true; $("login").hidden = false; $("lerr").textContent = msg; $("lp").value = ""; setTimeout(() => $("lu").focus(), 0); }
+function showLogin(msg = "") {
+  $("app").hidden = true; $("login").hidden = false; $("lerr").textContent = msg; $("lp").value = "";
+  $("lc").value = ""; $("codeField").hidden = true; $("lu").readOnly = false; $("lp").readOnly = false;
+  setTimeout(() => $("lu").focus(), 0);
+}
 function signOut(msg = "") { saveToken(""); queue.forEach(u => u.cancel && u.cancel()); showLogin(msg); }
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault(); const b = $("lbtn"); b.disabled = true; b.textContent = "Signing in…"; $("lerr").textContent = "";
   try {
-    const r = await fetch(API + "/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: $("lu").value.trim(), pass: $("lp").value }) });
+    const r = await fetch(API + "/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: $("lu").value.trim(), pass: $("lp").value, code: $("lc").value.trim() }) });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(j.error || "Couldn't sign in.");
+    if (j.needCode) {   // password was right, the server now wants the 2FA code
+      $("codeField").hidden = false; $("lu").readOnly = true; $("lp").readOnly = true;
+      $("lerr").textContent = ""; $("lc").focus(); return;
+    }
     saveToken(j.token); start();
   } catch (err) {
     $("lerr").textContent = err instanceof TypeError ? "Can't reach your PC. Check that it's on and the drive server is running." : err.message;
