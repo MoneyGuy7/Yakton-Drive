@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>My Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF0F3; --panel:#FFFFFF; --ink:#15212C; --muted:#5B6976; --line:#D8DEE4; --hover:#F4F7F9;
+  --accent:#0E7C86; --accent-ink:#FFFFFF; --accent-soft:#DCF0F1; --danger:#B3372B; --danger-soft:#FBE7E4;
+  --side:#15212C; --side-ink:#E9EEF2; --side-muted:#93A3B1; --side-line:#26343F;
+  --ring-track:#2A3945;
+  --r:10px;
+  font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0E151B; --panel:#16202A; --ink:#E6EDF3; --muted:#8A9AA8; --line:#26333E; --hover:#1B2733;
+    --accent:#3DB8C1; --accent-ink:#06191B; --accent-soft:#12373B; --danger:#F0766B; --danger-soft:#3A1E1B;
+    --side:#0A1015; --side-line:#1A252E;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+[hidden]{display:none!important}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- sign-in ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--side)}
+.login-card{width:100%;max-width:380px;color:var(--side-ink)}
+.login-disk{width:76px;height:76px;margin-bottom:28px}
+.login h1{font-size:30px;line-height:1.1;margin:0 0 6px;font-weight:700;letter-spacing:-.02em}
+.login p{margin:0 0 28px;color:var(--side-muted)}
+.field{display:block;margin-bottom:16px}
+.field span{display:block;font-size:13px;color:var(--side-muted);margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;border-radius:var(--r);border:1px solid var(--side-line);background:#0E171E;color:var(--side-ink)}
+.field input:focus{outline:2px solid var(--accent);border-color:transparent}
+.login .err{min-height:22px;color:#FF9C91;margin:0 0 12px;font-size:14px}
+.btn-main{width:100%;padding:13px 16px;border:0;border-radius:var(--r);background:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn-main:disabled{opacity:.6;cursor:default}
+@media (prefers-color-scheme:light){ .btn-main{background:#1AA3AF;color:#04181A} }
+
+/* ---------- app shell ---------- */
+.app{display:grid;grid-template-columns:288px minmax(0,1fr);min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:var(--side);color:var(--side-ink);display:flex;flex-direction:column;padding:24px 20px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;letter-spacing:-.01em;margin-bottom:26px}
+.brand svg{width:26px;height:26px;flex:none}
+.side .btn{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border-radius:var(--r);border:1px solid var(--side-line);background:transparent;color:var(--side-ink);text-align:left;margin-bottom:8px}
+.side .btn:hover{background:#1D2A35}
+.side .btn.primary{background:#1AA3AF;border-color:transparent;color:#04181A;font-weight:600}
+.side .btn.primary:hover{background:#2BB5C1}
+.side .btn svg{width:18px;height:18px;flex:none}
+.meter{margin-top:auto;padding-top:24px;border-top:1px solid var(--side-line)}
+.meter-row{display:flex;align-items:center;gap:16px}
+.ring{width:86px;height:86px;flex:none;position:relative}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-weight:700;font-size:17px}
+.meter .free{font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.meter .sub{color:var(--side-muted);font-size:13px;margin-top:3px}
+.meter .mine{margin-top:14px;font-size:13px;color:var(--side-muted)}
+.meter .mine b{color:var(--side-ink);font-weight:600}
+.who{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px;font-size:14px}
+.who button{background:none;border:0;padding:4px 0;color:var(--side-muted);text-decoration:underline;text-underline-offset:3px}
+.who button:hover{color:var(--side-ink)}
+
+.main{padding:28px 36px 120px;min-width:0}
+.top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.crumbs{display:flex;align-items:center;flex-wrap:wrap;gap:2px;font-size:22px;font-weight:700;letter-spacing:-.02em;margin-right:auto;min-width:0}
+.crumbs button{background:none;border:0;padding:4px 6px;border-radius:6px;font-weight:inherit;font-size:inherit;letter-spacing:inherit;color:var(--muted);max-width:30ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crumbs button:hover{background:var(--hover);color:var(--ink)}
+.crumbs button:last-child{color:var(--ink)}
+.crumbs .sep{color:var(--muted);font-weight:400}
+.search{width:240px;max-width:100%;padding:9px 12px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel)}
+
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{font-weight:500;font-size:13px;color:var(--muted);text-align:left;padding:0;border-bottom:1px solid var(--line);background:var(--panel)}
+th button{width:100%;text-align:left;padding:12px 16px;background:none;border:0;color:inherit;font-size:inherit;display:flex;gap:6px;align-items:center}
+th button:hover{color:var(--ink)}
+th.num button{justify-content:flex-start}
+td{padding:0 16px;height:56px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--hover)}
+.c-name{width:100%}
+.c-size,.c-date{white-space:nowrap;color:var(--muted);font-size:14px}
+.c-size{width:110px}
+.c-date{width:150px}
+.c-act{width:1%;white-space:nowrap;text-align:right}
+.name{display:flex;align-items:center;gap:12px;min-width:0}
+.name .t{min-width:0}
+.name .t b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.name .t small{display:none;color:var(--muted);font-size:13px}
+.name button.link{background:none;border:0;padding:0;text-align:left;font-weight:500;min-width:0;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.name button.link:hover{text-decoration:underline;text-underline-offset:3px}
+.chip{flex:none;width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:10.5px;font-weight:700;letter-spacing:.02em;background:var(--hover);color:var(--muted);border:1px solid var(--line)}
+.chip.dir{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.chip.dir svg{width:20px;height:20px}
+.chip.img{background:#E7F0FF;color:#2B5BB8;border-color:transparent}
+.chip.vid{background:#F3E8FF;color:#7A3EB0;border-color:transparent}
+.chip.aud{background:#FFEFD9;color:#9A5A0A;border-color:transparent}
+.chip.doc{background:#FFE9E6;color:#B3372B;border-color:transparent}
+.chip.arc{background:#E8F4E4;color:#3B7A2A;border-color:transparent}
+@media (prefers-color-scheme:dark){
+  .chip.img{background:#17294A;color:#8CB4FF}.chip.vid{background:#2B1A40;color:#C79BFF}
+  .chip.aud{background:#40290E;color:#FFC070}.chip.doc{background:#40201C;color:#FF9C91}.chip.arc{background:#1D3317;color:#98D985}
+}
+.acts{display:inline-flex;gap:2px}
+.icon{width:36px;height:36px;display:grid;place-items:center;border:0;border-radius:8px;background:none;color:var(--muted)}
+.icon:hover{background:var(--line);color:var(--ink)}
+.icon.del:hover{background:var(--danger-soft);color:var(--danger)}
+.icon svg{width:18px;height:18px}
+.empty{padding:64px 24px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:17px;margin-bottom:4px}
+.empty button{margin-top:16px;padding:10px 16px;border-radius:var(--r);border:0;background:var(--accent);color:var(--accent-ink);font-weight:600}
+.loading{padding:48px;text-align:center;color:var(--muted)}
+
+/* ---------- drop overlay ---------- */
+.drop{position:fixed;inset:12px;z-index:50;border:2px dashed var(--accent);border-radius:20px;background:color-mix(in srgb,var(--bg) 88%,var(--accent));display:grid;place-items:center;text-align:center;pointer-events:none}
+.drop b{display:block;font-size:24px;letter-spacing:-.02em}
+.drop span{color:var(--muted)}
+
+/* ---------- upload tray ---------- */
+.tray{position:fixed;right:20px;bottom:20px;z-index:40;width:360px;max-width:calc(100vw - 24px);background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.22);overflow:hidden}
+.tray-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line);font-weight:600}
+.tray-head .r{display:flex;gap:4px}
+.tray-head button{background:none;border:0;padding:4px 8px;border-radius:6px;color:var(--muted);font-size:13px;font-weight:500}
+.tray-head button:hover{background:var(--hover);color:var(--ink)}
+.tray-list{max-height:280px;overflow:auto}
+.tray.min .tray-list{display:none}
+.up{padding:10px 14px;border-bottom:1px solid var(--line)}
+.up:last-child{border-bottom:0}
+.up-top{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.up-top .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.up-top button{background:none;border:0;color:var(--muted);padding:0 2px;font-size:13px}
+.up-top button:hover{color:var(--danger)}
+.bar{height:5px;border-radius:3px;background:var(--line);margin:8px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .15s linear}
+.up.done .bar i{background:#2E9E5B}
+.up.error .bar i{background:var(--danger)}
+.up-s{font-size:12.5px;color:var(--muted)}
+.up.error .up-s{color:var(--danger)}
+
+/* ---------- dialog + toast ---------- */
+dialog{border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);padding:22px;width:min(420px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(8,14,19,.55)}
+dialog h2{margin:0 0 6px;font-size:18px;letter-spacing:-.01em}
+dialog p{margin:0 0 14px;color:var(--muted);overflow-wrap:anywhere}
+dialog input{width:100%;padding:10px 12px;border-radius:var(--r);border:1px solid var(--line);background:var(--bg);margin-bottom:6px}
+dialog .e{min-height:20px;color:var(--danger);font-size:13px;margin-bottom:10px}
+dialog .row{display:flex;justify-content:flex-end;gap:8px;margin-top:8px}
+dialog .row button{padding:9px 16px;border-radius:var(--r);border:1px solid var(--line);background:none;font-weight:500}
+dialog .row button.ok{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600}
+dialog .row button.ok.danger{background:var(--danger);color:#fff}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:10px;max-width:calc(100vw - 32px);font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.3)}
+
+/* ---------- phones ---------- */
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;padding:16px;flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center}
+  .brand{margin:0 auto 0 0;width:auto}
+  .side .btn{width:auto;margin:0;padding:9px 12px}
+  .side .btn .lbl-long{display:none}
+  .meter{order:9;width:100%;margin-top:6px;padding-top:12px}
+  .ring{width:56px;height:56px}.ring .pct{font-size:12px}
+  .meter .free{font-size:16px}
+  .who{width:100%;margin-top:8px}
+  .main{padding:18px 14px 140px}
+  .crumbs{font-size:19px}
+  .search{width:100%}
+  th.c-size,th.c-date,td.c-size,td.c-date{display:none}
+  .name .t small{display:block}
+  td{padding:0 8px 0 12px}
+  .tray{right:12px;bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){ .bar i{transition:none} }
+</style>
+</head>
+<body>
+
+<!-- ============ SIGN IN ============ -->
+<main class="login" id="login" hidden>
+  <form class="login-card" id="loginForm" autocomplete="on">
+    <svg class="login-disk" viewBox="0 0 76 76" aria-hidden="true">
+      <circle cx="38" cy="38" r="34" fill="none" stroke="#2A3945" stroke-width="5"/>
+      <path d="M38 4a34 34 0 0 1 29.4 17" fill="none" stroke="#1AA3AF" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="38" cy="38" r="9" fill="#1AA3AF"/><circle cx="38" cy="38" r="3" fill="#15212C"/>
+    </svg>
+    <h1 id="loginTitle">My Drive</h1>
+    <p>Sign in to reach the files on your PC.</p>
+    <label class="field"><span>Username</span><input id="lu" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+    <label class="field"><span>Password</span><input id="lp" name="password" type="password" autocomplete="current-password" required></label>
+    <div class="err" id="lerr" role="alert"></div>
+    <button class="btn-main" id="lbtn" type="submit">Sign in</button>
+  </form>
+</main>
+
+<!-- ============ DRIVE ============ -->
+<div class="app" id="app" hidden>
+  <aside class="side">
+    <div class="brand">
+      <svg viewBox="0 0 76 76" aria-hidden="true"><circle cx="38" cy="38" r="32" fill="none" stroke="#2A3945" stroke-width="8"/><path d="M38 6a32 32 0 0 1 27.7 16" fill="none" stroke="#1AA3AF" stroke-width="8" stroke-linecap="round"/><circle cx="38" cy="38" r="8" fill="#1AA3AF"/></svg>
+      <span id="brandName">My Drive</span>
+    </div>
+    <button class="btn primary" id="bUp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg><span>Upload<span class="lbl-long"> files</span></span></button>
+    <button class="btn" id="bUpDir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 15v-5M9.5 12.5 12 10l2.5 2.5"/></svg><span>Upload<span class="lbl-long"> a</span> folder</span></button>
+    <button class="btn" id="bMk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>New folder</button>
+
+    <div class="meter" id="meter" hidden>
+      <div class="meter-row">
+        <div class="ring">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--ring-track)" stroke-width="11"/>
+            <circle id="ringArc" cx="50" cy="50" r="42" fill="none" stroke="#1AA3AF" stroke-width="11" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
+          </svg>
+          <div class="pct" id="ringPct"></div>
+        </div>
+        <div>
+          <div class="free" id="mFree"></div>
+          <div class="sub" id="mTotal"></div>
+        </div>
+      </div>
+      <div class="mine">Your files take up <b id="mMine">0 B</b></div>
+    </div>
+    <div class="who"><span id="whoName"></span><button id="bOut">Sign out</button></div>
+  </aside>
+
+  <main class="main">
+    <div class="top">
+      <nav class="crumbs" id="crumbs" aria-label="Folder path"></nav>
+      <input class="search" id="search" type="search" placeholder="Filter this folder" aria-label="Filter this folder">
+    </div>
+    <div class="sheet">
+      <div class="loading" id="loading">Loading…</div>
+      <table id="tbl" hidden>
+        <thead><tr>
+          <th class="c-name"><button data-k="name">Name <span class="arr"></span></button></th>
+          <th class="c-size"><button data-k="size">Size <span class="arr"></span></button></th>
+          <th class="c-date"><button data-k="mtime">Modified <span class="arr"></span></button></th>
+          <th class="c-act"></th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty" id="empty" hidden></div>
+    </div>
+  </main>
+</div>
+
+<div class="drop" id="drop" hidden><div><b>Drop to upload</b><span id="dropTo"></span></div></div>
+
+<section class="tray" id="tray" hidden aria-live="polite">
+  <div class="tray-head"><span id="trayTitle">Uploads</span>
+    <div class="r"><button id="tClear">Clear finished</button><button id="tMin">Hide</button></div></div>
+  <div class="tray-list" id="trayList"></div>
+</section>
+
+<dialog id="dlg"><form method="dialog" id="dlgForm">
+  <h2 id="dT"></h2><p id="dP"></p>
+  <input id="dI" autocomplete="off" spellcheck="false">
+  <div class="e" id="dE" role="alert"></div>
+  <div class="row"><button type="button" id="dNo">Cancel</button><button type="submit" class="ok" id="dOk"></button></div>
+</form></dialog>
+
+<input type="file" id="fileIn" multiple hidden>
+<input type="file" id="dirIn" webkitdirectory hidden>
+
+<script src="config.js"></script>
+<script>
+"use strict";
+const API  = String(window.DRIVE_API || "").replace(/\/+$/, "");
+const NAME = window.DRIVE_NAME || "My Drive";
+const CHUNK = 50 * 1024 * 1024;   // 50 MB pieces stay under Cloudflare's 100 MB request cap
+const BAD_NAME = /[<>:"|?*\u0000-\u001f]/;
+
+const $ = id => document.getElementById(id);
+const h = (tag, attrs = {}, ...kids) => {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v === true) e.setAttribute(k, "");
+    else if (v !== false && v != null) e.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) e.append(c instanceof Node ? c : document.createTextNode(c ?? ""));
+  return e;
+};
+const svg = d => { const s = document.createElement("span"); s.style.display = "contents";
+  s.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`; return s; };
+const ICON = {
+  dl:  '<path d="M12 4v12M7 11l5 5 5-5M4 20h16"/>',
+  ren: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  del: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  dir: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>'
+};
+
+/* ---------- state ---------- */
+let token = ""; try { token = localStorage.getItem("drive.token") || ""; } catch {}
+let entries = [], cwd = [], me = null;
+let sort = { k: "name", d: 1 }, filter = "";
+
+const saveToken = t => { token = t; try { t ? localStorage.setItem("drive.token", t) : localStorage.removeItem("drive.token"); } catch {} };
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function fmtSize(n) {
+  if (!n) return "0 B";
+  const u = ["B", "KB", "MB", "GB", "TB"]; let i = Math.min(Math.floor(Math.log(n) / Math.log(1024)), 4);
+  const v = n / 1024 ** i; return (v >= 100 || i === 0 ? v.toFixed(0) : v.toFixed(1)) + " " + u[i];
+}
+function fmtDate(ms) {
+  const d = new Date(ms), now = new Date();
+  if (d.toDateString() === now.toDateString()) return "Today " + d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  return d.toLocaleDateString([], { month: "short", day: "numeric", year: d.getFullYear() === now.getFullYear() ? undefined : "numeric" });
+}
+let toastT;
+function toast(msg) {
+  document.querySelectorAll(".toast").forEach(t => t.remove());
+  const t = h("div", { class: "toast", role: "status" }, msg); document.body.append(t);
+  clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 4500);
+}
+
+/* ---------- API ---------- */
+async function api(path, opt = {}) {
+  let r;
+  try {
+    r = await fetch(API + path, { ...opt, headers: { Authorization: "Bearer " + token, ...(opt.body ? { "Content-Type": "application/json" } : {}) } });
+  } catch { throw Object.assign(new Error("Can't reach your PC. Check that it's on and the drive server is running."), { network: true }); }
+  let j = {}; try { j = await r.json(); } catch {}
+  if (r.status === 401 && token) { signOut("Your session ended. Sign in again."); }
+  if (!r.ok) throw Object.assign(new Error(j.error || "Something went wrong."), { status: r.status });
+  return j;
+}
+const post = (route, body) => api(route, { method: "POST", body: JSON.stringify(body) });
+
+/* ---------- sign in / out ---------- */
+function showLogin(msg = "") { $("app").hidden = true; $("login").hidden = false; $("lerr").textContent = msg; $("lp").value = ""; setTimeout(() => $("lu").focus(), 0); }
+function signOut(msg = "") { saveToken(""); queue.forEach(u => u.cancel && u.cancel()); showLogin(msg); }
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault(); const b = $("lbtn"); b.disabled = true; b.textContent = "Signing in…"; $("lerr").textContent = "";
+  try {
+    const r = await fetch(API + "/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user: $("lu").value.trim(), pass: $("lp").value }) });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(j.error || "Couldn't sign in.");
+    saveToken(j.token); start();
+  } catch (err) {
+    $("lerr").textContent = err instanceof TypeError ? "Can't reach your PC. Check that it's on and the drive server is running." : err.message;
+  } finally { b.disabled = false; b.textContent = "Sign in"; }
+});
+$("bOut").onclick = () => signOut();
+
+/* ---------- navigation ---------- */
+const pathFromHash = () => location.hash.slice(2).split("/").filter(Boolean).map(s => { try { return decodeURIComponent(s); } catch { return s; } });
+const hashFor = parts => "#/" + parts.map(encodeURIComponent).join("/");
+const goto = parts => { location.hash = hashFor(parts); };
+window.addEventListener("hashchange", () => { if (token && !$("app").hidden) load(); });
+
+function renderCrumbs() {
+  const nav = $("crumbs"); nav.replaceChildren();
+  nav.append(h("button", { onclick: () => goto([]) }, NAME));
+  cwd.forEach((p, i) => {
+    nav.append(h("span", { class: "sep", "aria-hidden": "true" }, "/"));
+    nav.append(h("button", { onclick: () => goto(cwd.slice(0, i + 1)), "aria-current": i === cwd.length - 1 ? "page" : null }, p));
+  });
+}
+
+/* ---------- list ---------- */
+async function load() {
+  cwd = pathFromHash(); renderCrumbs(); $("search").value = filter = "";
+  $("loading").hidden = false; $("tbl").hidden = true; $("empty").hidden = true;
+  try {
+    const r = await api("/api/list?path=" + encodeURIComponent(cwd.join("/")));
+    entries = r.entries; render();
+  } catch (e) {
+    if (e.status === 400 && cwd.length) { toast("That folder doesn't exist."); goto([]); return; }
+    $("loading").textContent = e.message;
+  }
+}
+async function loadMe() {
+  try { me = await api("/api/me"); paintMeter(); } catch {}
+}
+function paintMeter() {
+  if (!me) return;
+  $("whoName").textContent = "Signed in as " + me.user;
+  $("meter").hidden = false;
+  $("mMine").textContent = fmtSize(me.used);
+  if (me.total > 0) {
+    const frac = Math.min(1, Math.max(0, (me.total - me.free) / me.total));
+    $("ringArc").setAttribute("stroke-dashoffset", String(263.9 * (1 - frac)));
+    $("ringPct").textContent = Math.round(frac * 100) + "%";
+    $("mFree").textContent = fmtSize(me.free) + " free";
+    $("mTotal").textContent = "of " + fmtSize(me.total) + " on this PC";
+  } else {
+    $("ringPct").textContent = ""; $("mFree").textContent = "Drive online"; $("mTotal").textContent = "Disk size unavailable";
+  }
+}
+
+const EXT = {
+  img: "jpg jpeg png gif webp heic heif bmp svg tif tiff raw cr2 nef arw dng avif",
+  vid: "mp4 mov mkv avi webm m4v wmv flv mts",
+  aud: "mp3 wav flac aac m4a ogg opus aiff",
+  doc: "pdf doc docx xls xlsx ppt pptx txt md rtf csv odt key pages numbers",
+  arc: "zip rar 7z tar gz bz2 iso dmg"
+};
+const catOf = ext => Object.keys(EXT).find(k => EXT[k].split(" ").includes(ext)) || "";
+function chip(e) {
+  if (e.dir) return h("span", { class: "chip dir" }, svg(ICON.dir));
+  const dot = e.name.lastIndexOf("."), ext = dot > 0 ? e.name.slice(dot + 1).toLowerCase() : "";
+  return h("span", { class: "chip " + catOf(ext) }, ext ? ext.slice(0, 4).toUpperCase() : "FILE");
+}
+
+function render() {
+  $("loading").hidden = true;
+  const q = filter.trim().toLowerCase();
+  const rows = entries.filter(e => !q || e.name.toLowerCase().includes(q)).sort((a, b) => {
+    if (a.dir !== b.dir) return a.dir ? -1 : 1;
+    const x = sort.k === "name" ? a.name.toLowerCase() : a[sort.k], y = sort.k === "name" ? b.name.toLowerCase() : b[sort.k];
+    return (x < y ? -1 : x > y ? 1 : 0) * sort.d;
+  });
+  document.querySelectorAll("th .arr").forEach(s => { const k = s.parentElement.dataset.k; s.textContent = k === sort.k ? (sort.d > 0 ? "↑" : "↓") : ""; });
+  const tb = $("rows"); tb.replaceChildren();
+  if (!rows.length) {
+    $("tbl").hidden = true; const em = $("empty"); em.hidden = false; em.replaceChildren();
+    if (q) em.append(h("b", {}, "No matches"), "Nothing in this folder matches “" + filter + "”.");
+    else em.append(h("b", {}, cwd.length ? "This folder is empty" : "Your drive is empty"), "Drag files here, or choose them from your computer.",
+      h("br"), h("button", { onclick: () => $("fileIn").click() }, "Upload files"));
+    return;
+  }
+  $("empty").hidden = true; $("tbl").hidden = false;
+  for (const e of rows) {
+    const rel = cwd.concat(e.name).join("/");
+    const meta = (e.dir ? "" : fmtSize(e.size) + " · ") + fmtDate(e.mtime);
+    const title = e.dir
+      ? h("button", { class: "link", onclick: () => goto(cwd.concat(e.name)) }, e.name)
+      : h("b", {}, e.name);
+    tb.append(h("tr", {},
+      h("td", { class: "c-name" }, h("div", { class: "name" }, chip(e), h("div", { class: "t" }, title, h("small", {}, meta)))),
+      h("td", { class: "c-size" }, e.dir ? "—" : fmtSize(e.size)),
+      h("td", { class: "c-date" }, fmtDate(e.mtime)),
+      h("td", { class: "c-act" }, h("div", { class: "acts" },
+        e.dir ? null : h("button", { class: "icon", title: "Download", "aria-label": "Download " + e.name, onclick: () => download(rel) }, svg(ICON.dl)),
+        h("button", { class: "icon", title: "Rename", "aria-label": "Rename " + e.name, onclick: () => rename(e) }, svg(ICON.ren)),
+        h("button", { class: "icon del", title: "Delete", "aria-label": "Delete " + e.name, onclick: () => remove(e) }, svg(ICON.del))))));
+  }
+}
+document.querySelectorAll("th button").forEach(b => b.onclick = () => {
+  const k = b.dataset.k; sort = { k, d: sort.k === k ? -sort.d : 1 }; render();
+});
+$("search").addEventListener("input", e => { filter = e.target.value; render(); });
+
+/* ---------- dialogs ---------- */
+function ask({ title, text = "", value = null, ok = "OK", danger = false, validate }) {
+  return new Promise(res => {
+    const dlg = $("dlg"), inp = $("dI"), err = $("dE");
+    $("dT").textContent = title; $("dP").textContent = text; $("dP").hidden = !text;
+    inp.hidden = value === null; inp.value = value ?? ""; err.textContent = "";
+    $("dOk").textContent = ok; $("dOk").className = "ok" + (danger ? " danger" : "");
+    let done = false;
+    const finish = v => { if (done) return; done = true; dlg.close(); $("dlgForm").onsubmit = null; res(v); };
+    $("dlgForm").onsubmit = e => {
+      e.preventDefault();
+      if (value === null) return finish(true);
+      const v = inp.value.trim(), m = validate && validate(v);
+      if (m) { err.textContent = m; return; } finish(v);
+    };
+    $("dNo").onclick = () => finish(null);
+    dlg.oncancel = e => { e.preventDefault(); finish(null); };
+    dlg.showModal(); if (value !== null) { inp.focus(); inp.select(); }
+  });
+}
+const nameCheck = (v, skip) => !v ? "Type a name." : v === "." || v === ".." ? "That name isn't allowed."
+  : /[\\/]/.test(v) ? "Names can't contain / or \\." : BAD_NAME.test(v) ? "Windows doesn't allow < > : \" | ? * in names."
+  : v.endsWith(".part") ? "Names can't end in .part." : /[. ]$/.test(v) ? "Names can't end with a dot or space."
+  : entries.some(e => e.name.toLowerCase() === v.toLowerCase() && e.name !== skip) ? "That name is already used here." : "";
+
+$("bMk").onclick = async () => {
+  const n = await ask({ title: "New folder", value: "", ok: "Create", validate: v => nameCheck(v) });
+  if (!n) return;
+  try { await post("/api/mkdir", { path: cwd.concat(n).join("/") }); load(); } catch (e) { toast(e.message); }
+};
+async function rename(e) {
+  const n = await ask({ title: "Rename", value: e.name, ok: "Rename", validate: v => nameCheck(v, e.name) });
+  if (!n || n === e.name) return;
+  try { await post("/api/rename", { path: cwd.concat(e.name).join("/"), name: n }); load(); } catch (er) { toast(er.message); }
+}
+async function remove(e) {
+  const ok = await ask({ title: "Delete " + (e.dir ? "folder" : "file") + "?", text: e.dir ? `“${e.name}” and everything inside it will be permanently deleted from your PC.` : `“${e.name}” will be permanently deleted from your PC.`, ok: "Delete", danger: true });
+  if (!ok) return;
+  try { await post("/api/delete", { path: cwd.concat(e.name).join("/") }); load(); loadMe(); toast("Deleted " + e.name); } catch (er) { toast(er.message); }
+}
+async function download(rel) {
+  try {
+    const { url } = await api("/api/link?path=" + encodeURIComponent(rel));
+    const a = h("a", { href: API + url, download: "" }); document.body.append(a); a.click(); a.remove();
+  } catch (e) { toast(e.message); }
+}
+
+/* ---------- uploads ---------- */
+const queue = []; let running = false;
+function sendChunk(u, off, end, last) {
+  return new Promise((ok, no) => {
+    const x = new XMLHttpRequest(); u.xhr = x;
+    x.open("POST", API + "/api/upload?" + new URLSearchParams({ path: u.path, offset: off, last: last ? 1 : 0 }));
+    x.setRequestHeader("Authorization", "Bearer " + token);
+    x.upload.onprogress = ev => { u.loaded = off + ev.loaded; paintUp(u); };
+    x.onload = () => {
+      let j = {}; try { j = JSON.parse(x.responseText); } catch {}
+      if (x.status === 200) { u.loaded = end; ok(); }
+      else no(Object.assign(new Error(j.error || "Upload failed."), { status: x.status, size: j.size }));
+    };
+    x.onerror = () => no(new Error("Lost connection to your PC."));
+    x.onabort = () => no(Object.assign(new Error("Canceled"), { canceled: true }));
+    x.send(u.file.slice(off, end));
+  });
+}
+async function uploadOne(u) {
+  const size = u.file.size; let off = 0, tries = 0;
+  for (;;) {
+    const end = Math.min(off + CHUNK, size), last = end >= size;
+    try { await sendChunk(u, off, end, last); tries = 0; if (last) return; off = end; }
+    catch (e) {
+      if (e.canceled || u.canceled) throw Object.assign(new Error("Canceled"), { canceled: true });
+      if (e.status === 401) throw e;
+      // the server tells us how much it really has, so we pick up from there
+      if (e.status === 409 && typeof e.size === "number" && e.size <= size && e.size !== off) { off = e.size; u.loaded = off; paintUp(u); continue; }
+      if (e.status && e.status !== 409 && e.status < 500) throw e;
+      if (++tries > 6) throw e;
+      u.note = "Retrying…"; paintUp(u); await sleep(1000 * tries);
+    }
+  }
+}
+async function pump() {
+  if (running) return; running = true;
+  let any = false;
+  for (let u; (u = queue.find(q => q.state === "queued")); ) {
+    u.state = "active"; u.note = ""; paintUp(u);
+    try { await uploadOne(u); u.state = "done"; any = true; }
+    catch (e) { u.state = e.canceled ? "canceled" : "error"; u.note = e.canceled ? "Canceled" : e.message; if (e.status === 401) { running = false; return; } }
+    paintUp(u); trayTitle();
+    if (u.state === "done" && u.dirKey === cwd.join("/")) refreshSoon();
+  }
+  running = false; trayTitle();
+  if (any) { load(); loadMe(); }
+}
+let rt; const refreshSoon = () => { clearTimeout(rt); rt = setTimeout(() => { if (!running) return; api("/api/list?path=" + encodeURIComponent(cwd.join("/"))).then(r => { entries = r.entries; render(); }).catch(() => {}); }, 400); };
+
+function enqueue(files) {   // files: [{file, rel}]
+  if (!files.length) return;
+  const here = new Set(entries.filter(e => !e.dir).map(e => e.name));
+  const clashes = files.filter(f => !f.rel.includes("/") && here.has(f.rel));
+  const go = () => {
+    const dirKey = cwd.join("/");
+    for (const f of files) {
+      const bad = f.rel.split("/").find(s => BAD_NAME.test(s) || /[. ]$/.test(s) || s.endsWith(".part"));
+      const u = { id: Math.random().toString(36).slice(2), file: f.file, rel: f.rel, path: cwd.concat(f.rel.split("/")).join("/"), dirKey,
+        loaded: 0, state: bad ? "error" : "queued", note: bad ? "Windows can't store this file name." : "", tries: 0, t0: Date.now() };
+      u.cancel = () => { u.canceled = true; if (u.state === "queued") { u.state = "canceled"; u.note = "Canceled"; paintUp(u); } else if (u.xhr) u.xhr.abort(); };
+      queue.push(u);
+    }
+    $("tray").hidden = false; $("tray").classList.remove("min"); $("tMin").textContent = "Hide";
+    queue.forEach(paintUp); trayTitle(); pump();
+  };
+  if (clashes.length) {
+    ask({ title: "Replace existing files?", text: clashes.length === 1 ? `“${clashes[0].rel}” is already in this folder.` : `${clashes.length} of these files are already in this folder.`, ok: "Replace" }).then(ok => ok && go());
+  } else go();
+}
+function paintUp(u) {
+  let el = document.getElementById("u" + u.id);
+  if (!el) { el = h("div", { class: "up", id: "u" + u.id }, h("div", { class: "up-top" }, h("span", { class: "n" }), h("button", { "aria-label": "Cancel upload" }, "Cancel")), h("div", { class: "bar" }, h("i")), h("div", { class: "up-s" })); el.querySelector("button").onclick = () => u.cancel(); $("trayList").append(el); }
+  const pct = u.file.size ? Math.min(100, Math.floor(u.loaded / u.file.size * 100)) : (u.state === "done" ? 100 : 0);
+  el.className = "up " + u.state;
+  el.querySelector(".n").textContent = u.rel; el.querySelector(".n").title = u.rel;
+  el.querySelector("i").style.width = (u.state === "done" ? 100 : pct) + "%";
+  el.querySelector("button").hidden = !(u.state === "queued" || u.state === "active");
+  const s = el.querySelector(".up-s");
+  s.textContent = u.state === "done" ? "Uploaded · " + fmtSize(u.file.size) + " · original quality"
+    : u.state === "queued" ? "Waiting · " + fmtSize(u.file.size)
+    : u.state === "active" ? (u.note || `${pct}% · ${fmtSize(u.loaded)} of ${fmtSize(u.file.size)}`)
+    : u.note;
+}
+function trayTitle() {
+  const act = queue.filter(u => u.state === "queued" || u.state === "active").length;
+  $("trayTitle").textContent = act ? `Uploading ${act} file${act > 1 ? "s" : ""}` : "Uploads";
+}
+$("tClear").onclick = () => { for (let i = queue.length - 1; i >= 0; i--) { const u = queue[i]; if (u.state !== "queued" && u.state !== "active") { document.getElementById("u" + u.id)?.remove(); queue.splice(i, 1); } } if (!queue.length) $("tray").hidden = true; };
+$("tMin").onclick = () => { const m = $("tray").classList.toggle("min"); $("tMin").textContent = m ? "Show" : "Hide"; };
+window.addEventListener("beforeunload", e => { if (queue.some(u => u.state === "queued" || u.state === "active")) { e.preventDefault(); e.returnValue = ""; } });
+
+$("bUp").onclick = () => $("fileIn").click();
+$("bUpDir").onclick = () => $("dirIn").click();
+$("fileIn").onchange = e => { enqueue([...e.target.files].map(file => ({ file, rel: file.name }))); e.target.value = ""; };
+$("dirIn").onchange = e => { enqueue([...e.target.files].map(file => ({ file, rel: file.webkitRelativePath || file.name }))); e.target.value = ""; };
+
+/* drag and drop, including whole folders */
+let dragDepth = 0;
+const hasFiles = e => e.dataTransfer && [...e.dataTransfer.types].includes("Files");
+window.addEventListener("dragenter", e => { if (!hasFiles(e) || $("app").hidden) return; e.preventDefault(); if (++dragDepth === 1) { $("dropTo").textContent = "into " + (cwd.length ? cwd[cwd.length - 1] : NAME); $("drop").hidden = false; } });
+window.addEventListener("dragover", e => { if (hasFiles(e)) e.preventDefault(); });
+window.addEventListener("dragleave", e => { if (!hasFiles(e)) return; if (--dragDepth <= 0) { dragDepth = 0; $("drop").hidden = true; } });
+window.addEventListener("drop", async e => {
+  if (!hasFiles(e)) return; e.preventDefault(); dragDepth = 0; $("drop").hidden = true;
+  if ($("app").hidden) return;
+  const items = [...e.dataTransfer.items].map(i => i.webkitGetAsEntry && i.webkitGetAsEntry()), out = [];
+  const walk = async (en, base) => {
+    if (en.isFile) out.push({ file: await new Promise((ok, no) => en.file(ok, no)), rel: base + en.name });
+    else if (en.isDirectory) {
+      const rd = en.createReader(); let batch;
+      do { batch = await new Promise((ok, no) => rd.readEntries(ok, no)); for (const c of batch) await walk(c, base + en.name + "/"); } while (batch.length);
+    }
+  };
+  try {
+    if (items.length && items.every(Boolean)) for (const en of items) await walk(en, "");
+    else for (const f of e.dataTransfer.files) out.push({ file: f, rel: f.name });
+  } catch { toast("Couldn't read the dropped items."); }
+  enqueue(out);
+});
+
+/* ---------- boot ---------- */
+function start() {
+  document.title = NAME; $("loginTitle").textContent = NAME; $("brandName").textContent = NAME;
+  if (!API || API.includes("yourdomain.com")) { showLogin("Set DRIVE_API in config.js to your tunnel address first."); return; }
+  if (!token) return showLogin();
+  $("login").hidden = true; $("app").hidden = false;
+  if (!location.hash.startsWith("#/")) history.replaceState(null, "", "#/");
+  load(); loadMe();
+}
+document.title = NAME; $("loginTitle").textContent = NAME;
+start();
+</script>
+</body>
+</html>

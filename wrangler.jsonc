@@ -1,0 +1,10 @@
+{
+  // Deploys the website in ./public as a Cloudflare Worker with static assets.
+  // Connect this GitHub repo in Cloudflare (Workers & Pages > Create > Import a repository).
+  // Deploy command: npx wrangler deploy
+  "name": "my-drive",
+  "compatibility_date": "2026-10-24",
+  "assets": {
+    "directory": "./public"
+  }
+}
